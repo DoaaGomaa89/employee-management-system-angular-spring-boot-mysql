@@ -1,0 +1,40 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: employees
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
+    ports:
+      - "3307:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./emp_backend          # <-- important: context is the backend folder
+      dockerfile: Dockerfile.backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/employees?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: app
+      SPRING_DATASOURCE_PASSWORD: app
+      # optional if you have JWT/other envs:
+      # JWT_SECRET: change_me
+      # JWT_EXPIRATION: "86400000"
+    depends_on:
+      - db
+    ports:
+      - "8082:8080"
+
+  frontend:
+    build:
+      context: ./emp_frontend
+      dockerfile: Dockerfile.frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"   # browse http://localhost:8080
+
+volumes:
+  db-data:

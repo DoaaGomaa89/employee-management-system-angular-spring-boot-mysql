@@ -16,19 +16,27 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Employee;
 import com.example.demo.repository.EmployeeRepository;
 
+import org.springframework.web.bind.annotation.RequestMethod;   // <-- add this
+import org.springframework.web.bind.annotation.*; 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/")
+@CrossOrigin(
+    origins = {"http://localhost:8080", "http://localhost:4200"},
+    allowedHeaders = "*",
+    allowCredentials = "true",
+    methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS}
+)
 public class EmployeeController {
 
 	@Autowired
 	private EmployeeRepository employeeRepository;
 	
 	//get all data
-	@CrossOrigin(origins = "http://localhost:4200")
 	@GetMapping("/employees")
 	public List <Employee> getAllEmployees(){
 		return employeeRepository.findAll();
@@ -37,7 +45,6 @@ public class EmployeeController {
 	
 	
 	//create 
-	@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("/employees")
 	public Employee createEmployee(@RequestBody Employee employee)
 	{
@@ -46,7 +53,6 @@ public class EmployeeController {
 	
 	
 	// get data by id 
-	@CrossOrigin(origins = "http://localhost:4200")
 	@GetMapping("/employees/{id}")
 	public ResponseEntity<Employee> getByID(@PathVariable Long id) {
 		Employee employee = employeeRepository.findById(id).
@@ -56,7 +62,6 @@ public class EmployeeController {
 	
 	
 	//update data 
-	@CrossOrigin(origins = "http://localhost:4200")
 	@PutMapping ("/employees/{id}")
 	public ResponseEntity<Employee> updateEmployeeByID(@PathVariable Long id, @RequestBody Employee employeeDetails){
 		Employee employee = employeeRepository.findById(id).
@@ -78,7 +83,6 @@ public class EmployeeController {
 	
 	
 	
-	@CrossOrigin(origins = "http://localhost:4200")
 	@DeleteMapping("/employees/{id}")
 	public ResponseEntity <Map<String, Boolean> >deleteEmployee(@PathVariable Long id){
 		
